@@ -6,8 +6,23 @@ from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 from fastapi_login import LoginManager
+import os
+from fastapi import FastAPI
+from starlette.staticfiles import StaticFiles
 
 app = FastAPI()
+
+# Get the absolute path of the static directory
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+
+# Create static folder if missing
+if not os.path.exists(static_dir):
+    os.makedirs(static_dir)
+
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+
+
 
 # MongoDB client setup
 client = AsyncIOMotorClient("mongodb://localhost:27017")
