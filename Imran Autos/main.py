@@ -6,7 +6,9 @@ from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 from fastapi_login import LoginManager
-
+import os
+from fastapi import FastAPI
+from starlette.staticfiles import StaticFiles
 app = FastAPI()
 
 # MongoDB client setup
@@ -16,8 +18,14 @@ db = client.ImranAutos
 # Jinja2 templates setup
 templates = Jinja2Templates(directory="templates")
 
-# Mount the static files directory
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app = FastAPI()
+
+# Get the absolute path of the static directory
+static_dir = os.path.abspath("static")
+if not os.path.exists(static_dir):
+    os.makedirs(static_dir)  # Create static folder if missing
+
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 SECRET = "welcome"
 manager = LoginManager(SECRET, token_url='/signin', use_cookie=True)
